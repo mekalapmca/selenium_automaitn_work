@@ -1,0 +1,84 @@
+package com.Cucumber;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+public class WebTable4 {
+
+	public static void main(String[] args) {
+		WebDriverManager.chromedriver().setup();
+		WebDriver driver = new ChromeDriver();
+		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		driver.get("https://opensource-demo.orangehrmlive.com/");
+	    driver.findElement(By.id("txtUsername")).sendKeys("Admin");
+	    driver.findElement(By.id("txtPassword")).sendKeys("admin123",Keys.ENTER);
+	    Actions action = new Actions(driver);
+	    
+		WebElement adminElement =  driver.findElement(By.id("menu_admin_viewAdminModule"));
+		action.moveToElement(adminElement).build().perform();
+		
+		WebElement userElement = driver.findElement(By.id("menu_admin_UserManagement"));
+		action.moveToElement(userElement).build().perform();
+		
+		driver.findElement(By.id("menu_admin_viewSystemUsers")).click();
+		
+		WebDriverWait wait = new WebDriverWait(driver, 30);
+		wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//*[@id='resultTable']//tr")));
+		
+	    List<WebElement> tableUserNames =	driver.findElements(By.xpath("//*[@id='resultTable']//tr"));
+		int userNamesCount = tableUserNames.size();
+		System.out.println(userNamesCount);
+		
+		String expUsername = "akcel123";
+		
+		//String actualUserNamexpath = "//*[@id='resultTable']//tr[1]//td[2]//a";
+		//String actualCheckBoxXpath = "//*[@id='resultTable']//tr[6]//td[1]//input";
+		
+		String xpath1 = "//*[@id='resultTable']//tr[";
+		String xpath2 = "]//td[2]//a";
+		String checkBox_XpathPart2 = "]//td[1]//input";
+		
+		boolean addStatus = false;
+		for(int i=1;i<userNamesCount;i++) {
+			String xpath3 = xpath1+i+xpath2;
+			System.out.println(xpath3);
+			 String actualUserName = driver.findElement(By.xpath(xpath3)).getText();
+			 System.out.println(i+" "+actualUserName);
+			 if(actualUserName.equals(expUsername)) {
+				 System.out.println("Matched with your expected username");
+				 driver.findElement(By.xpath(xpath1+i+checkBox_XpathPart2)).click();
+				                           //*[@id='resultTable']//tr[7]]//td[1]//input
+				 driver.findElement(By.id("btnAdd")).click();
+				 addStatus = true;
+				 break;
+			 }
+		}
+		
+		if(addStatus==true) {
+			
+		
+		}
+		else
+		{
+			System.out.println("not matched wih expected data to add");
+		}
+		
+		
+		
+		
+		
+		//driver.quit();
+	}
+
+}
